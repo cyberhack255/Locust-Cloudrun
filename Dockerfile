@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Start Locust without headless mode
-CMD ["locust", "-f", "locustfile.py", "--host", "$TARGET_URL"]
+CMD ["locust", "-f", "locustfile.py"]
