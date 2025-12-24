@@ -14,4 +14,4 @@ gcloud run deploy locust-test-runner \
     --region us-central1 \
     --allow-unauthenticated \
     --set-env-vars TARGET_URL=http://your-target-url.com,USERS=10000,SPAWN_RATE=10000,DURATION=10m
-testing
+test
