@@ -1,0 +1,17 @@
+
+
+
+
+Build the container
+gcloud builds submit --tag gcr.io/your-project-id/locust
+
+
+##Cloudrun deployment#######
+
+gcloud run deploy locust-test-runner \
+    --image gcr.io/your-project-id/locust \
+    --platform managed \
+    --region us-central1 \
+    --allow-unauthenticated \
+    --set-env-vars TARGET_URL=http://your-target-url.com,USERS=10000,SPAWN_RATE=10000,DURATION=10m
+
