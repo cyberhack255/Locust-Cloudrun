@@ -1,30 +1,53 @@
 #!/bin/bash
 
 # Configuration Variables
-SERVICE_NAME="locust-test-runner"
+BASE_SERVICE_NAME="locust-test-runner"
 IMAGE_URL="gcr.io/booming-primer-479412-g9/locust-cloudrun"
 REGION="us-central1"
 PLATFORM="managed"
 PORT="8089"
 
-# Function to deploy the service
+# Determine the number of instances (Default to 1 if not provided)
+COUNT=${2:-1}
+
+# Function to deploy services in parallel
 deploy_service() {
-    echo "🚀 Deploying $SERVICE_NAME to Cloud Run..."
-    gcloud run deploy "$SERVICE_NAME" \
-        --image "$IMAGE_URL" \
-        --platform "$PLATFORM" \
-        --region "$REGION" \
-        --port "$PORT" \
-        --allow-unauthenticated
+    echo "🚀 Starting parallel deployment of $COUNT instance(s)..."
+    
+    for ((i=1; i<=COUNT; i++)); do
+        CURRENT_SERVICE="${BASE_SERVICE_NAME}-${i}"
+        echo "   -> Triggering deploy for: $CURRENT_SERVICE"
+        
+        # The '&' puts this command in the background to run in parallel
+        gcloud run deploy "$CURRENT_SERVICE" \
+            --image "$IMAGE_URL" \
+            --platform "$PLATFORM" \
+            --region "$REGION" \
+            --port "$PORT" \
+            --allow-unauthenticated &
+    done
+
+    # Wait for all background jobs to finish
+    wait
+    echo "✅ All deployments completed."
 }
 
-# Function to delete the service
+# Function to delete services in parallel
 delete_service() {
-    echo "⚠️  Deleting $SERVICE_NAME from Cloud Run..."
-    gcloud run services delete "$SERVICE_NAME" \
-        --platform "$PLATFORM" \
-        --region "$REGION" \
-        --quiet
+    echo "⚠️  Starting parallel deletion of $COUNT instance(s)..."
+    
+    for ((i=1; i<=COUNT; i++)); do
+        CURRENT_SERVICE="${BASE_SERVICE_NAME}-${i}"
+        echo "   -> Triggering delete for: $CURRENT_SERVICE"
+        
+        gcloud run services delete "$CURRENT_SERVICE" \
+            --platform "$PLATFORM" \
+            --region "$REGION" \
+            --quiet &
+    done
+
+    wait
+    echo "🗑️  All deletions completed."
 }
 
 # Check for arguments
@@ -33,8 +56,9 @@ if [ "$1" == "deploy" ]; then
 elif [ "$1" == "delete" ]; then
     delete_service
 else
-    echo "Usage: $0 {deploy|delete}"
-    echo "  deploy  - Deploys the service to Cloud Run on port $PORT"
-    echo "  delete  - Deletes the service from Cloud Run"
+    echo "Usage: $0 {deploy|delete} [number_of_instances]"
+    echo "Examples:"
+    echo "  $0 deploy 5   # Deploys locust-test-runner-1 through locust-test-runner-5"
+    echo "  $0 delete 5   # Deletes locust-test-runner-1 through locust-test-runner-5"
     exit 1
 fi
