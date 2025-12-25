@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Start Locust without headless mode
-CMD ["locust", "-f", "locustfile.py"]
+CMD ["locust", "-f", "locustfile.py", "--web-auth", "user:password"]
