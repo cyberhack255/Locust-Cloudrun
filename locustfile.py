@@ -1,34 +1,37 @@
+import os
 from locust import HttpUser, task, events
-from flask import request, redirect, url_for, render_template_string, session
+from flask import request, redirect, url_for, render_template_string, session, make_response
 
-# --- CONFIGURATION ---
-USERNAME = "admin"
-PASSWORD = "password123"
-SECRET_KEY = "my_secret_key_123"
+# --- 1. CONFIGURATION ---
+# Use environment variables for security, or default to these values
+USERNAME = os.getenv("LOCUST_USERNAME", "admin")
+PASSWORD = os.getenv("LOCUST_PASSWORD", "password123")
+SECRET_KEY = os.getenv("LOCUST_SECRET_KEY", "change_me_to_something_random")
 
-# --- LOGIN HTML ---
+# --- 2. LOGIN PAGE HTML ---
 LOGIN_HTML = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Security Check</title>
+    <title>Locust Security</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #333; color: white; }
-        .box { background: #444; padding: 40px; border-radius: 10px; text-align: center; border: 2px solid #555; }
-        input { display: block; margin: 15px auto; padding: 10px; width: 200px; border-radius: 5px; border: none; }
-        button { padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; font-weight: bold;}
-        button:hover { background: #218838; }
-        .error { color: #ff6b6b; margin-bottom: 15px; }
+        body { font-family: 'Helvetica', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #2c3e50; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; width: 300px; }
+        h2 { margin-top: 0; color: #333; }
+        input { display: block; width: 90%; padding: 10px; margin: 15px auto; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+        button { width: 90%; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; transition: background 0.3s; }
+        button:hover { background: #2ecc71; }
+        .error { color: #e74c3c; font-size: 13px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>restricted access</h2>
+    <div class="login-card">
+        <h2>Locked Locust</h2>
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         <form method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Unlock</button>
+            <button type="submit">Unlock Dashboard</button>
         </form>
     </div>
 </body>
@@ -41,38 +44,53 @@ def on_locust_init(environment, **kwargs):
         app = environment.web_ui.app
         app.secret_key = SECRET_KEY
 
-        # 1. Register our custom login route
+        # --- A. Define Custom Login Routes ---
+        
         @app.route("/custom-login", methods=["GET", "POST"])
         def custom_login():
             if request.method == "POST":
+                # Check credentials
                 if request.form.get("username") == USERNAME and request.form.get("password") == PASSWORD:
                     session["logged_in"] = True
-                    return redirect("/") # Send them to the main dashboard
+                    return redirect("/")  # Redirect to main dashboard
                 else:
                     return render_template_string(LOGIN_HTML, error="Invalid Credentials")
+            
+            # Show the login page
             return render_template_string(LOGIN_HTML, error=None)
 
-        # 2. Register a logout route
         @app.route("/logout")
         def logout():
             session.pop("logged_in", None)
             return redirect("/custom-login")
 
-        # 3. The Gatekeeper: Run this before EVERY request
+        # --- B. The Gatekeeper (Fixes the CLEANUP/Offline bug) ---
+        
         @app.before_request
         def protect_routes():
-            # Allow static files (css/js) so the page looks right
+            # 1. Always allow static files (CSS, JS, Images)
             if request.path.startswith("/static"):
                 return
             
-            # Allow the login page itself (otherwise infinite loop)
+            # 2. Always allow the login page itself
             if request.path == "/custom-login":
                 return
 
-            # If not logged in, FORCE redirect to login
-            if not session.get("logged_in"):
-                return redirect("/custom-login")
+            # 3. Check if user is logged in
+            if session.get("logged_in"):
+                return  # Access granted
+            
+            # 4. Handle API calls specifically (The Fix)
+            # If the dashboard tries to fetch stats while not logged in, 
+            # return a 401 error instead of redirecting to HTML.
+            # This prevents the UI from trying to parse HTML as JSON.
+            if request.path.startswith("/stats") or request.path.startswith("/exceptions") or request.path.startswith("/tasks"):
+                return make_response("Unauthorized", 401)
 
+            # 5. For standard page loads, redirect to login
+            return redirect("/custom-login")
+
+# --- 3. YOUR LOAD TEST ---
 class MyUser(HttpUser):
     @task
     def my_task(self):
