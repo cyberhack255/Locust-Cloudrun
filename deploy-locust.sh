@@ -8,10 +8,6 @@ PLATFORM="managed"
 PORT="8089"
 MEMORY="8Gi"
 CPU="8"
-GOOGLE_CLIENT_ID=""
-GOOGLE_CLIENT_SECRET=""
-MY_SECRET_KEY="9qM}i%MbqT<5A8)"
-MY_ALLOWED_EMAILS="pentest5211@gmail.com"
 
 # Determine the number of instances (Default to 1 if not provided)
 COUNT=${2:-1}
@@ -33,10 +29,7 @@ deploy_service() {
             --memory "$MEMORY" \
             --cpu "$CPU" \
             --allow-unauthenticated \
-            --set-env-vars="GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" \
-            --set-env-vars="GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" \
-            --set-env-vars="LOCUST_SECRET_KEY=$MY_SECRET_KEY" \
-            --set-env-vars="ALLOWED_EMAILS=$MY_ALLOWED_EMAILS"&
+            -- &
     done
 
     # Wait for all background jobs to finish
