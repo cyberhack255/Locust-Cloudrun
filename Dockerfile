@@ -1,11 +1,14 @@
-FROM python:3.9-slim
+FROM locustio/locust
 
-WORKDIR /app
+# Install Authlib for Google Login
+RUN pip install authlib requests
 
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+# Copy your locustfile
+COPY locustfile.py /mnt/locust/locustfile.py
 
-COPY . .
+# Cloud Run defaults to port 8080. 
+# We set the Locust Web Port to match it.
+ENV LOCUST_WEB_PORT=8080
 
-# Start Locust without headless mode
-CMD ["locust", "-f", "locustfile.py"]
+# Command to run locust
+CMD ["-f", "/mnt/locust/locustfile.py"]
