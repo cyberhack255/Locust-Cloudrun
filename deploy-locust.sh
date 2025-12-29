@@ -28,8 +28,7 @@ deploy_service() {
             --port "$PORT" \
             --memory "$MEMORY" \
             --cpu "$CPU" \
-            --allow-unauthenticated \
-            -- &
+            --allow-unauthenticated & \
     done
 
     # Wait for all background jobs to finish
