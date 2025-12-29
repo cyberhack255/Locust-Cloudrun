@@ -4,9 +4,9 @@ from flask import request, redirect, url_for, render_template_string, session, m
 
 # --- 1. CONFIGURATION ---
 # Use environment variables for security, or default to these values
-USERNAME = os.getenv("LOCUST_USERNAME", "admin")
-PASSWORD = os.getenv("LOCUST_PASSWORD", "password123")
-SECRET_KEY = os.getenv("LOCUST_SECRET_KEY", "change_me_to_something_random")
+USERNAME = os.getenv("LOCUST_USERNAME", "hacker")
+PASSWORD = os.getenv("LOCUST_PASSWORD", "")
+SECRET_KEY = os.getenv("LOCUST_SECRET_KEY", "")
 
 # --- 2. LOGIN PAGE HTML ---
 LOGIN_HTML = """
