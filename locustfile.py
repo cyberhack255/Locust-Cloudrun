@@ -26,7 +26,7 @@ LOGIN_HTML = """
 </head>
 <body>
     <div class="login-card">
-        <h2>Locked Locust</h2>
+        <h2>Authorised Access Only</h2>
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         <form method="POST">
             <input type="text" name="username" placeholder="Username" required>
