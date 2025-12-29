@@ -7,7 +7,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix # <--- REQUIRED FOR CLOUD RUN
 # --- CONFIGURATION ---
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-SECRET_KEY = os.getenv("LOCUST_SECRET_KEY", "change_me_to_something_secure")
+SECRET_KEY = os.getenv("LOCUST_SECRET_KEY", "9qM}i%MbqT<5A8)")
 ALLOWED_EMAILS = os.getenv("ALLOWED_EMAILS", "").split(",")
 
 @events.init.add_listener
