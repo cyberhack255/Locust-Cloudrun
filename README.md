@@ -12,7 +12,19 @@
 - LOCUST_SECRET_KEY = anything (eg. Fyurpgjsdflfdgyrt)
 <img width="882" height="469" alt="image" src="https://github.com/user-attachments/assets/1d88ca42-37dc-4652-94bf-f172d818d6a0" />
 
-### 
+### Building docker image in Artiface Registry
+-  Go to Locust-Cloudrun directory
+-  Run "./build.sh" should see the following screenshot
+<img width="1121" height="468" alt="image" src="https://github.com/user-attachments/assets/f3dbde2a-4ecf-49af-9bec-73dc46003e10" />
+
+- When the build is completed should see "Successfully build" message
+<img width="869" height="159" alt="image" src="https://github.com/user-attachments/assets/cd95d332-629f-47ae-b6fc-54ad50c96af2" />
+
+- Verify Docker image in Artifect Registry
+
+<img width="1050" height="441" alt="image" src="https://github.com/user-attachments/assets/0f7afdcd-ac22-4368-b67d-1fca232a270c" />
+
+
 
 
 
