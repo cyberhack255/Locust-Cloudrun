@@ -12,9 +12,9 @@
 - LOCUST_SECRET_KEY = anything (eg. Fyurpgjsdflfdgyrt)
 <img width="882" height="469" alt="image" src="https://github.com/user-attachments/assets/1d88ca42-37dc-4652-94bf-f172d818d6a0" />
 
-### Building docker image in Artiface Registry
+### Building docker image in Artifact Registry
 -  Go to Locust-Cloudrun directory
--  Run "./build.sh" should see the following screenshot
+-  Run `./build.sh` should see the following screenshot
 <img width="1121" height="468" alt="image" src="https://github.com/user-attachments/assets/f3dbde2a-4ecf-49af-9bec-73dc46003e10" />
 
 - When the build is completed should see "Successfully build" message
@@ -23,6 +23,22 @@
 - Verify Docker image in Artifect Registry
 
 <img width="1050" height="441" alt="image" src="https://github.com/user-attachments/assets/0f7afdcd-ac22-4368-b67d-1fca232a270c" />
+
+### Deploy docker image in Cloud Run
+
+- Go to Locust-Cloudrun directory
+- Run `./deploy-locust.sh deploy <number>` - The number represent how many cloudrun service you want to run
+- The following screenshot shows only 1 service deployed
+
+<img width="1045" height="212" alt="image" src="https://github.com/user-attachments/assets/6b3560cf-71d9-4b4a-b7ea-93a8f52d70c7" />
+
+### Destroy Cloud Run service
+
+- Run `./deploy-locust.sh delete <number>` You should see the following message.
+<img width="820" height="110" alt="image" src="https://github.com/user-attachments/assets/feff97a0-bca8-42b5-be36-f13be25a39f6" />
+
+
+
 
 
 
