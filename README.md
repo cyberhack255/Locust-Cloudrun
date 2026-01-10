@@ -32,6 +32,18 @@
 
 <img width="1045" height="212" alt="image" src="https://github.com/user-attachments/assets/6b3560cf-71d9-4b4a-b7ea-93a8f52d70c7" />
 
+ In the browser go to the address as shown in the `service url` which will ask for authentication (use the username and password that was setup earlier in locustfile.py)
+ 
+<img width="647" height="551" alt="image" src="https://github.com/user-attachments/assets/474cb580-25d1-4282-8308-1465ad248479" />
+
+- Once login, the following screen will appear.
+  
+<img width="889" height="594" alt="image" src="https://github.com/user-attachments/assets/f1a6eaa0-b1cb-49d4-8679-ca9d62ec87d2" />
+
+- 1000 = number of virtual users
+- 100 =  ramp up started per second
+- Advanced options is where you define the duration time in minute
+
 ### Destroy Cloud Run service
 
 - Run `./deploy-locust.sh delete <number>` You should see the following message.
